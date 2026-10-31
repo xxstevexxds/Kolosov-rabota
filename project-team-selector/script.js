@@ -1,6 +1,14 @@
 const list = document.getElementById("list");
 
-let users = JSON.parse(localStorage.getItem("users")) || [];
+function loadUsers() {
+    return JSON.parse(localStorage.getItem("users")) || [];
+}
+
+function saveUsers() {
+    saveUsers();
+}
+
+let users = loadUsers();
 
 render();
 
@@ -13,13 +21,18 @@ document.getElementById("addBtn").addEventListener("click", () => {
         alert("Заполните все поля");
         return;
     }
-
+    if (users.some(user =>
+    user.name.toLowerCase() === name.value.trim().toLowerCase()
+)) {
+    alert("Участник с таким именем уже существует.");
+    return;
+}
     users.push({
         name: name.value,
         interest: interest.value
     });
 
-    localStorage.setItem("users", JSON.stringify(users));
+    saveUsers();
 
     name.value = "";
     interest.value = "";
@@ -32,7 +45,7 @@ function deleteUser(index){
 
     users.splice(index,1);
 
-    localStorage.setItem("users",JSON.stringify(users));
+    saveUsers();
 
     render();
 
