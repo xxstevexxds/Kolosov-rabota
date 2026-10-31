@@ -28,17 +28,37 @@ document.getElementById("addBtn").addEventListener("click", () => {
 
 });
 
+function deleteUser(index){
+
+    users.splice(index,1);
+
+    localStorage.setItem("users",JSON.stringify(users));
+
+    render();
+
+}
+
 function render() {
 
     list.innerHTML = "";
 
-    users.forEach(user => {
+    users.forEach((user,index) => {
 
         const li = document.createElement("li");
 
-        li.innerHTML =
-            `<strong>${user.name}</strong><br>
-            Интересы: ${user.interest}`;
+        li.innerHTML = `
+            <div class="row">
+                <div>
+                    <strong>${user.name}</strong><br>
+                    Интересы: ${user.interest}
+                </div>
+
+                <button class="deleteBtn"
+                onclick="deleteUser(${index})">
+                Удалить
+                </button>
+            </div>
+        `;
 
         list.appendChild(li);
 
