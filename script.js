@@ -19,7 +19,7 @@ document.getElementById("addBtn").addEventListener("click", () => {
 
     // Проверка №1 - пустые поля
     if (name.value.trim() === "" || interest.value.trim() === "") {
-        alert("Введите имя участника и его интересы.");
+        alert("Ошибка: заполните имя участника и его интересы.");
         return;
     }
 
