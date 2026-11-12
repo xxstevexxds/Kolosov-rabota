@@ -18,11 +18,13 @@
 
     <div class="form">
 
+        <label for="name">Имя участника</label>
         <input
             type="text"
             id="name"
             placeholder="Имя участника">
 
+        <label for="interest">Интересы участника</label>
         <input
             type="text"
             id="interest"
@@ -34,6 +36,8 @@
 
     </div>
 
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+
     <h2>Участники</h2>
 
     <label class="search-label" for="search">Поиск участников</label>
@@ -42,6 +46,7 @@
         id="search"
         placeholder="Введите имя или интерес">
 
+    <p id="emptyState" class="empty-state"></p>
     <ul id="list"></ul>
 
 </div>

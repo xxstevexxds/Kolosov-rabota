@@ -1,5 +1,9 @@
 const list = document.getElementById("list");
 const search = document.getElementById("search");
+const nameInput = document.getElementById("name");
+const interestInput = document.getElementById("interest");
+const message = document.getElementById("message");
+const emptyState = document.getElementById("emptyState");
 
 function loadUsers() {
     return ParticipantLogic.parseStoredUsers(localStorage.getItem("users"));
@@ -15,42 +19,53 @@ render();
 
 search.addEventListener("input", render);
 
-document.getElementById("addBtn").addEventListener("click", () => {
+document.getElementById("addBtn").addEventListener("click", addParticipant);
+[nameInput, interestInput].forEach(input => {
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            addParticipant();
+        }
+    });
+});
 
-    const name = document.getElementById("name");
-    const interest = document.getElementById("interest");
+function showMessage(text, type = "success") {
+    message.textContent = text;
+    message.classList.toggle("error", type === "error");
+}
 
-    // Проверка №1 - пустые поля
-    if (name.value.trim() === "" || interest.value.trim() === "") {
-        alert("Ошибка: заполните имя участника и его интересы.");
-        return;
-    }
+function addParticipant() {
+    const validationError = ParticipantLogic.validateParticipant(
+        users,
+        nameInput.value,
+        interestInput.value
+    );
 
-    // Проверка №2 - одинаковые имена
-    if (users.some(user =>
-        user.name.toLowerCase() === name.value.trim().toLowerCase()
-    )) {
-        alert("Участник с таким именем уже существует.");
+    if (validationError) {
+        showMessage(validationError, "error");
         return;
     }
 
     users.push({
-        name: name.value.trim(),
-        interest: interest.value.trim()
+        name: nameInput.value.trim(),
+        interest: interestInput.value.trim()
     });
 
     saveUsers();
-
-    name.value = "";
-    interest.value = "";
-
+    nameInput.value = "";
+    interestInput.value = "";
+    showMessage("Участник добавлен и сохранён.");
     render();
-
-});
+    nameInput.focus();
+}
 
 function deleteUser(index) {
+    if (!window.confirm("Удалить участника?")) {
+        return;
+    }
+
     users.splice(index, 1);
     saveUsers();
+    showMessage("Участник удалён.");
     render();
 }
 
@@ -80,6 +95,13 @@ function createUserListItem(user) {
 }
 
 function render() {
+    const filteredUsers = ParticipantLogic.filterUsers(users, search.value);
+
     list.innerHTML = "";
-    list.append(...ParticipantLogic.filterUsers(users, search.value).map(createUserListItem));
+    list.append(...filteredUsers.map(createUserListItem));
+
+    emptyState.hidden = filteredUsers.length > 0;
+    emptyState.textContent = users.length === 0
+        ? "Участников пока нет. Добавьте первого участника в форме выше."
+        : "По вашему запросу участники не найдены.";
 }
