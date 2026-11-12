@@ -1,4 +1,5 @@
 const list = document.getElementById("list");
+const search = document.getElementById("search");
 
 function loadUsers() {
     return JSON.parse(localStorage.getItem("users")) || [];
@@ -11,6 +12,8 @@ function saveUsers() {
 }
 
 render();
+
+search.addEventListener("input", render);
 
 document.getElementById("addBtn").addEventListener("click", () => {
 
@@ -59,7 +62,15 @@ function render() {
 
     list.innerHTML = "";
 
-    users.forEach((user, index) => {
+    const query = search.value.trim().toLowerCase();
+    const filteredUsers = users.filter(user =>
+        user.name.toLowerCase().includes(query) ||
+        user.interest.toLowerCase().includes(query)
+    );
+
+    filteredUsers.forEach(user => {
+
+        const index = users.indexOf(user);
 
         const li = document.createElement("li");
 
