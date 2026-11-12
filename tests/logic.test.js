@@ -1,6 +1,10 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { filterUsers, parseStoredUsers } = require("../logic.js");
+const {
+    filterUsers,
+    parseStoredUsers,
+    validateParticipant
+} = require("../logic.js");
 
 const users = [
     { name: "Иван", interest: "JavaScript" },
@@ -18,4 +22,22 @@ test("пустой запрос возвращает всех участнико
 
 test("повреждённые данные localStorage заменяются пустым списком", () => {
     assert.deepEqual(parseStoredUsers("{некорректный json"), []);
+});
+
+test("пустое имя отклоняется с понятным сообщением", () => {
+    assert.equal(
+        validateParticipant(users, "   ", "JavaScript"),
+        "Введите имя участника и его интересы."
+    );
+});
+
+test("повторяющееся имя определяется без учёта регистра", () => {
+    assert.equal(
+        validateParticipant(users, "иван", "Дизайн"),
+        "Участник с таким именем уже существует."
+    );
+});
+
+test("корректный участник проходит проверку", () => {
+    assert.equal(validateParticipant(users, "Мария", "Тестирование"), "");
 });

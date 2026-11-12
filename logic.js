@@ -21,9 +21,27 @@
         }
     }
 
+    function validateParticipant(users, name, interest) {
+        const normalizedName = name.trim();
+        const normalizedInterest = interest.trim();
+
+        if (!normalizedName || !normalizedInterest) {
+            return "Введите имя участника и его интересы.";
+        }
+
+        const nameExists = users.some(user =>
+            user.name.toLowerCase() === normalizedName.toLowerCase()
+        );
+
+        return nameExists
+            ? "Участник с таким именем уже существует."
+            : "";
+    }
+
     const participantLogic = {
         filterUsers,
-        parseStoredUsers
+        parseStoredUsers,
+        validateParticipant
     };
 
     if (typeof module !== "undefined" && module.exports) {
