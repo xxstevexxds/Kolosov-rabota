@@ -49,47 +49,46 @@ document.getElementById("addBtn").addEventListener("click", () => {
 });
 
 function deleteUser(index) {
-
     users.splice(index, 1);
-
     saveUsers();
-
     render();
+}
 
+function filterUsers(query) {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    return users.filter(user =>
+        user.name.toLowerCase().includes(normalizedQuery) ||
+        user.interest.toLowerCase().includes(normalizedQuery)
+    );
+}
+
+function createUserListItem(user) {
+    const item = document.createElement("li");
+    const row = document.createElement("div");
+    const details = document.createElement("div");
+    const name = document.createElement("strong");
+    const interest = document.createElement("span");
+    const deleteButton = document.createElement("button");
+
+    row.className = "row";
+    name.textContent = user.name;
+    interest.textContent = `Интересы: ${user.interest}`;
+    deleteButton.className = "deleteBtn";
+    deleteButton.type = "button";
+    deleteButton.textContent = "Удалить";
+    deleteButton.addEventListener("click", () => {
+        deleteUser(users.indexOf(user));
+    });
+
+    details.append(name, document.createElement("br"), interest);
+    row.append(details, deleteButton);
+    item.append(row);
+
+    return item;
 }
 
 function render() {
-
     list.innerHTML = "";
-
-    const query = search.value.trim().toLowerCase();
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(query) ||
-        user.interest.toLowerCase().includes(query)
-    );
-
-    filteredUsers.forEach(user => {
-
-        const index = users.indexOf(user);
-
-        const li = document.createElement("li");
-
-        li.innerHTML = `
-        <div class="row">
-            <div>
-                <strong>${user.name}</strong><br>
-                Интересы: ${user.interest}
-            </div>
-
-            <button class="deleteBtn"
-                onclick="deleteUser(${index})">
-                Удалить
-            </button>
-        </div>
-        `;
-
-        list.appendChild(li);
-
-    });
-
+    list.append(...filterUsers(search.value).map(createUserListItem));
 }
