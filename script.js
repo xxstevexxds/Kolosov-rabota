@@ -1,4 +1,5 @@
 const list = document.getElementById("list");
+const search = document.getElementById("search");
 
 function loadUsers() {
     return JSON.parse(localStorage.getItem("users")) || [];
@@ -11,6 +12,8 @@ function saveUsers() {
 }
 
 render();
+
+search.addEventListener("input", render);
 
 document.getElementById("addBtn").addEventListener("click", () => {
 
@@ -46,39 +49,46 @@ document.getElementById("addBtn").addEventListener("click", () => {
 });
 
 function deleteUser(index) {
-
     users.splice(index, 1);
-
     saveUsers();
-
     render();
+}
 
+function filterUsers(query) {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    return users.filter(user =>
+        user.name.toLowerCase().includes(normalizedQuery) ||
+        user.interest.toLowerCase().includes(normalizedQuery)
+    );
+}
+
+function createUserListItem(user) {
+    const item = document.createElement("li");
+    const row = document.createElement("div");
+    const details = document.createElement("div");
+    const name = document.createElement("strong");
+    const interest = document.createElement("span");
+    const deleteButton = document.createElement("button");
+
+    row.className = "row";
+    name.textContent = user.name;
+    interest.textContent = `Интересы: ${user.interest}`;
+    deleteButton.className = "deleteBtn";
+    deleteButton.type = "button";
+    deleteButton.textContent = "Удалить";
+    deleteButton.addEventListener("click", () => {
+        deleteUser(users.indexOf(user));
+    });
+
+    details.append(name, document.createElement("br"), interest);
+    row.append(details, deleteButton);
+    item.append(row);
+
+    return item;
 }
 
 function render() {
-
     list.innerHTML = "";
-
-    users.forEach((user, index) => {
-
-        const li = document.createElement("li");
-
-        li.innerHTML = `
-        <div class="row">
-            <div>
-                <strong>${user.name}</strong><br>
-                Интересы: ${user.interest}
-            </div>
-
-            <button class="deleteBtn"
-                onclick="deleteUser(${index})">
-                Удалить
-            </button>
-        </div>
-        `;
-
-        list.appendChild(li);
-
-    });
-
+    list.append(...filterUsers(search.value).map(createUserListItem));
 }
