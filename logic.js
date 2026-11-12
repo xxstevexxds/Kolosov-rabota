@@ -13,8 +13,12 @@
             return [];
         }
 
-        const parsedValue = JSON.parse(rawValue);
-        return Array.isArray(parsedValue) ? parsedValue : [];
+        try {
+            const parsedValue = JSON.parse(rawValue);
+            return Array.isArray(parsedValue) ? parsedValue : [];
+        } catch {
+            return [];
+        }
     }
 
     const participantLogic = {
