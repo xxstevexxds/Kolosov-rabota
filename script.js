@@ -2,7 +2,7 @@ const list = document.getElementById("list");
 const search = document.getElementById("search");
 
 function loadUsers() {
-    return JSON.parse(localStorage.getItem("users")) || [];
+    return ParticipantLogic.parseStoredUsers(localStorage.getItem("users"));
 }
 
 let users = loadUsers();
@@ -54,15 +54,6 @@ function deleteUser(index) {
     render();
 }
 
-function filterUsers(query) {
-    const normalizedQuery = query.trim().toLowerCase();
-
-    return users.filter(user =>
-        user.name.toLowerCase().includes(normalizedQuery) ||
-        user.interest.toLowerCase().includes(normalizedQuery)
-    );
-}
-
 function createUserListItem(user) {
     const item = document.createElement("li");
     const row = document.createElement("div");
@@ -90,5 +81,5 @@ function createUserListItem(user) {
 
 function render() {
     list.innerHTML = "";
-    list.append(...filterUsers(search.value).map(createUserListItem));
+    list.append(...ParticipantLogic.filterUsers(users, search.value).map(createUserListItem));
 }
